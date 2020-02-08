@@ -35,7 +35,7 @@ class MoviesController < ApplicationController
     # Set sort_key w/ order of precedence params, session, default
     if params[:sort]
       sort_key = params[:sort]
-    elsif session[:sort]
+    elsif session[:sort] != "" and session[:sort] != nil
       sort_key = session[:sort]
     else
       sort_key = ""
