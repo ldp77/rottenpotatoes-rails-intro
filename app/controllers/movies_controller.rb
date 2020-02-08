@@ -12,20 +12,40 @@ class MoviesController < ApplicationController
 
   def index
     # @movies = Movie.all
-    puts params
     @all_ratings = Movie.all_ratings
     
-    @desired_ratings = Movie.all_ratings
+    # Update session if new ratings/sort comes in through params
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+    end
+    
+    if params[:sort]
+      session[:sort] = params[:sort]
+    end
+    
+    # Set desired_ratings w/ order of precedence params, session, default
     if params[:ratings]
       @desired_ratings = params[:ratings].keys
+    elsif session[:ratings]
+      @desired_ratings = session[:ratings].keys
+    else
+      @desired_ratings = Movie.all_ratings
     end
-    puts @desired_ratings
-      
-    if params[:sort] == 'title'
+    
+    # Set sort_key w/ order of precedence params, session, default
+    if params[:sort]
+      sort_key = params[:sort]
+    elsif session[:sort]
+      sort_key = session[:sort]
+    else
+      sort_key = ""
+    end
+    
+    if sort_key == 'title'
       @movies = Movie.where(rating: @desired_ratings).sort_by { |movie| movie.title }
-    elsif params[:sort] == 'rating'
+    elsif sort_key == 'rating'
       @movies = Movie.where(rating: @desired_ratings).sort_by { |movie| movie.rating }
-    elsif params[:sort] == 'release_date'
+    elsif sort_key == 'release_date'
       @movies = Movie.where(rating: @desired_ratings).sort_by { |movie| movie.release_date }
     else
       @movies = Movie.where(rating: @desired_ratings)
