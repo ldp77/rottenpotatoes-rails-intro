@@ -12,14 +12,23 @@ class MoviesController < ApplicationController
 
   def index
     # @movies = Movie.all
+    puts params
+    @all_ratings = Movie.all_ratings
+    
+    desired_ratings = Movie.all_ratings
+    if params[:ratings]
+      desired_ratings = params[:ratings].keys
+    end
+    puts desired_ratings
+      
     if params[:sort] == 'title'
-      @movies = Movie.all.sort_by { |movie| movie.title }
+      @movies = Movie.where(rating: desired_ratings).sort_by { |movie| movie.title }
     elsif params[:sort] == 'rating'
-      @movies = Movie.all.sort_by { |movie| movie.rating }
+      @movies = Movie.where(rating: desired_ratings).sort_by { |movie| movie.rating }
     elsif params[:sort] == 'release_date'
-      @movies = Movie.all.sort_by { |movie| movie.release_date }
+      @movies = Movie.where(rating: desired_ratings).sort_by { |movie| movie.release_date }
     else
-      @movies = Movie.all
+      @movies = Movie.where(rating: desired_ratings)
     end
   end
 
